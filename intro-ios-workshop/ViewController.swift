@@ -35,9 +35,19 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var responseLabel: UILabel!
 
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        becomeFirstResponder()
+    }
+
+    override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+        if motion == .motionShake {
+            responseLabel.text = getRandomResponse()
+        }
     }
 
     @IBAction func handleShakeButtonPressed(_ sender: Any) {
