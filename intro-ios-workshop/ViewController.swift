@@ -34,6 +34,7 @@ class ViewController: UIViewController {
     ]
 
     @IBOutlet weak var responseLabel: UILabel!
+    @IBOutlet weak var ballInsideImageView: UIImageView!
 
     override var canBecomeFirstResponder: Bool {
         return true
@@ -46,17 +47,37 @@ class ViewController: UIViewController {
 
     override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
         if motion == .motionShake {
-            responseLabel.text = getRandomResponse()
+            updateResponse()
         }
     }
 
     @IBAction func handleShakeButtonPressed(_ sender: Any) {
-        responseLabel.text = getRandomResponse()
+        updateResponse()
     }
 
-    private func getRandomResponse() -> String {
-        let randomIndex = Int(arc4random_uniform(UInt32(responses.count)))
-        return responses[randomIndex]
-    }
+    private func updateResponse() {
+        let shrinkFactor: CGFloat = 0.1
+        let animationTime = 0.9
+        UIView.animate(
+            withDuration: animationTime,
+            animations: {
+                self.ballInsideImageView.transform = CGAffineTransform(scaleX: shrinkFactor, y: shrinkFactor)
+                self.ballInsideImageView.alpha = shrinkFactor
+                self.responseLabel.transform = CGAffineTransform(scaleX: shrinkFactor, y: shrinkFactor)
+                self.responseLabel.alpha = 0
+            }, completion: { _ in
+                let randomIndex = Int(arc4random_uniform(UInt32(self.responses.count)))
+                self.responseLabel.text = self.responses[randomIndex]
 
+                UIView.animate(withDuration: animationTime) {
+                    self.ballInsideImageView.transform = .identity
+                    self.ballInsideImageView.alpha = 1
+
+                    self.responseLabel.transform = .identity
+                    self.responseLabel.alpha = 1
+                }
+            }
+        )
+
+    }
 }
